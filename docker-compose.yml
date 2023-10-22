@@ -1,0 +1,36 @@
+version: '3.9'
+
+services:
+  postgres:
+    container_name: armgi_postgres_container
+    image: postgres:bullseye
+    volumes:
+      - postgres:/var/lib/postgresql
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-template}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-template}
+      POSTGRES_DB: ${POSTGRES_DATABASE:-template}
+    networks:
+      - database
+    ports:
+      - "25432:5432"
+    restart: always
+  redis:
+    container_name: armgi_redis_container
+    image: redis:bookworm
+    command: redis-server --port 6379
+    labels:
+      - "name=redis"
+      - "mode=standalone"
+    ports:
+      - 26379:6379
+
+
+networks:
+  database:
+    driver: bridge
+  redis:
+    driver: bridge
+
+volumes:
+  postgres:
